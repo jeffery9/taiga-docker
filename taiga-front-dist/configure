@@ -5,6 +5,9 @@ cat > /etc/nginx/upstream.conf <<EOL
 upstream taiga-back {
   server ${TAIGABACK_PORT_8000_TCP_ADDR}:8000;
 }
+upstream taiga-events {
+  server ${TAIGAEVENTS_PORT_8080_TCP_ADDR}:8080;
+}
 
 EOL
 
@@ -24,7 +27,7 @@ cat > /usr/local/taiga/taiga-front-dist/dist/conf.json <<EOL
 
 {
     "api": "${API}",
-    "eventsUrl": null,
+    "eventsUrl": "ws://${HOSTNAME}:8080/events",
     "eventsMaxMissedHeartbeats": 5,
     "eventsHeartbeatIntervalTime": 60000,
     "debug": $DEBUG,

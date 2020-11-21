@@ -1,6 +1,10 @@
-FROM nginx:1.7
+FROM nginx:1.19
 
 MAINTAINER Hylke Visser <htdvisser@gmail.com>
+
+RUN set -x; \
+        sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list \
+        && sed -i 's/security.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list
 
 # Install Git
 RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
