@@ -1,13 +1,17 @@
-FROM python:3.4
+FROM python:3.7
 
 MAINTAINER Hylke Visser <htdvisser@gmail.com>
+
+RUN set -x; \
+	sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list \
+	&& sed -i 's/security.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list 
 
 # Install dependencies
 RUN \
   apt-get update -qq && \
   apt-get install -y netcat && \
   rm -rf /var/lib/apt/lists/* && \
-  pip install circus gunicorn
+  pip install -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com  circus gunicorn
 
 # Install taiga-back
 RUN \
@@ -17,7 +21,7 @@ RUN \
   mkdir /usr/local/taiga/media /usr/local/taiga/static /usr/local/taiga/logs && \
   cd /usr/local/taiga/taiga-back && \
   git checkout stable && \
-  pip install -r requirements.txt && \
+  pip install -i http://mirrors.aliyun.com/pypi/simple/  --trusted-host mirrors.aliyun.com  -r requirements.txt  && \
   touch /usr/local/taiga/taiga-back/settings/dockerenv.py && \
   touch /usr/local/taiga/circus.ini
 

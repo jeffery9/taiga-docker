@@ -1,0 +1,73 @@
+data:
+  image: tianon/true
+  volumes:
+    - /var/lib/postgresql/data
+    - /usr/local/taiga/media
+    - /usr/local/taiga/static
+    - /usr/local/taiga/logs
+
+db:
+  image: postgres
+  environment:
+    POSTGRES_USER: taiga
+    POSTGRES_PASSWORD: password
+  volumes_from:
+    - data
+  restart: always
+
+smtp:
+  image: namshi/smtp
+  hostname: smtp
+
+broker:
+  image: rabbitmq:3.8
+  hostname: broker
+  environment:
+    RABBITMQ_DEFAULT_VHOST: taiga
+    RABBITMQ_NODENAME: rabbit@localhost
+  volumes:
+    - broker:/var/lib/rabbitm
+
+taigaevents:
+  image: taigaio/taiga-events5:latest
+  hostname: events
+  links:
+    - broker
+  volumes:
+    - ./docker-compose/events.json:/etc/opt/taiga-events/config.json:ro
+
+taigaback:
+  build: taiga-back
+  hostname: back
+  environment:
+    DEBUG: "True"
+    SECRET_KEY: examplesecretkey
+    HOSTNAME: "192.168.1.20"
+    # EMAIL_USE_TLS: 'True'
+    EMAIL_HOST: smtp
+    # EMAIL_PORT: 587
+    # EMAIL_HOST_USER: youremail@gmail.com
+    # EMAIL_HOST_PASSWORD: yourpassword
+    POSTGRES_HOST: postgres
+    POSTGRES_PORT: 5432
+  links:
+    - db:postgres
+    - broker
+  volumes_from:
+    - data
+  restart: always
+
+taigafront:
+  build: taiga-front-dist
+  hostname: front
+  environment:
+    DEBUG: "true"
+    HOSTNAME: "192.168.1.20"
+  links:
+    - taigaback
+    - taigaevents
+  volumes_from:
+    - data
+  ports:
+    - 0.0.0.0:8080:80
+  restart: always
