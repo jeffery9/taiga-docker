@@ -22,7 +22,7 @@ RUN ln -sf /dev/stderr /var/log/nginx/error.log
 # Install taiga-front-dist
 RUN \
   mkdir -p /usr/local/taiga && \
-  git clone https://github.com/taigaio/taiga-front-dist.git /usr/local/taiga/taiga-front-dist && \
+  git clone http://gitlab.geninit.cn/repos/taiga-front-dist.git /usr/local/taiga/taiga-front-dist && \
   cd /usr/local/taiga/taiga-front-dist && \
   git checkout stable
 

@@ -1,10 +1,10 @@
 data:
   image: tianon/true
   volumes:
-    - /var/lib/postgresql/data
-    - /usr/local/taiga/media
-    - /usr/local/taiga/static
-    - /usr/local/taiga/logs
+    - ./volume/taiga_database:/var/lib/postgresql/data
+    - ./volume/taiga_media:/usr/local/taiga/media
+    - ./volume/taiga_static:/usr/local/taiga/static
+    - ./volume/taiga_logs:/usr/local/taiga/logs
 
 db:
   image: postgres
@@ -34,7 +34,7 @@ taigaevents:
   links:
     - broker
   volumes:
-    - ./docker-compose/events.json:/etc/opt/taiga-events/config.json:ro
+    - ./events.json:/etc/opt/taiga-events/config.json:ro
 
 taigaback:
   build: taiga-back
